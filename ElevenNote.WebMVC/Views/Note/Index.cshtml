@@ -1,0 +1,12 @@
+@model List<ElevenNote.Models.Note.NoteListItem>
+@{
+    ViewData["Title"] = "Your Notes";
+}
+
+<h1 class="display-4 mb-3">Your Notes</h1>
+@foreach (var note in Model)
+{
+ <div>
+    @note.Title
+ </div>   
+}

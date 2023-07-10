@@ -1,18 +1,17 @@
 using System.ComponentModel.DataAnnotations;
+using Microsoft.AspNetCore.Identity;
 
 namespace ElevenNote.Data.Entities;
 
-public class UserEntity
+public class UserEntity : IdentityUser<int>
 {
-    [Key]
-    public int Id { get; set; }
+    // Id is inherited
 
-    [Required]
-    [EmailAddress]
-    public string Email { get; set; } = string.Empty;
+    // Email is inherited
 
     [Required]
     public string Username { get; set; } = string.Empty;
+    public override string UserName => Username; //{ get; } forwarding to our property
 
     [Required]
     public string Password { get; set; } = string.Empty;

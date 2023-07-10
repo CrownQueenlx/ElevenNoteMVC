@@ -1,0 +1,38 @@
+@model ElevenNote.Models.User.UserRegister
+@{
+    ViewData["Title"] = "Register Account";
+    
+}
+
+@* <h1 class="display-4 mb-3">@ViewData["Title"]</h1> *@
+<h2 class="display-4 mb-3">Create Account</h2>
+
+<form asp-action="Register" method="post">
+@* .form-floating.mb-3*4>input.form-control+label+span.text-danger *@
+<div class="form-floating mb-3">
+    <input type="text" class="form-control" asp-for="Username" placeholder="Username">
+    <label asp-for="Username"></label>
+    <span asp-validation-for="Username" class="text-danger"></span>
+    </div>
+<div class="form-floating mb-3">
+    <input type="email" class="form-control" asp-for="Email" placeholder="Email">
+    <label asp-for="Email"></label>
+    <span asp-validation-for="Email" class="text-danger"></span>
+    </div>
+<div class="form-floating mb-3">
+    <input type="password" class="form-control" asp-for="Password" placeholder="Password">
+    <label asp-for="Password"></label>
+    <span asp-validation-for="Password" class="text-danger"></span>
+    </div>
+<div class="form-floating mb-3">
+    <input type="password" class="form-control" asp-for="ConfirmPassword" placeholder="Password">
+    <label asp-for="ConfirmPassword">Confirm Password</label>
+    <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
+    </div>
+    <div class="d-flex flex-column gap-2">
+        <button type="submit" class="btn btn-primary">Register</button>
+        <a asp-action="Login" asp-controller="Account" class="text-center py-2">
+            Already have an account?
+        </a>
+    </div>
+</form>

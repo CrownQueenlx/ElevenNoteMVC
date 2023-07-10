@@ -9,9 +9,40 @@ namespace ElevenNote.Services.User;
 public class UserService : IUserService
 {
     private readonly ApplicationDbContext _context;
-    public UserService(ApplicationDbContext context)
+    private readonly UserManager<UserEntity> _userManager;
+    private readonly SignInManager<UserEntity> _signInManager;
+
+    public UserService(
+        ApplicationDbContext context,
+        UserManager<UserEntity> userManager,
+        SignInManager<UserEntity> signInManager)
     {
         _context = context;
+        _userManager = userManager;
+        _signInManager = signInManager;
+    }
+
+    public async Task<bool> LoginAsync(UserLogin model)
+    {
+        // verifies the user exists by the username
+        var UserEntity = await _userManager.FindByNameAsync(model.UserName);
+        if (UserEntity is null)
+            return false;
+
+        // verifies the correct password was given
+        var passwordHasher = new PasswordHasher<UserEntity>();
+        var verifyPasswordResult = passwordHasher.VerifyHashedPassword(UserEntity, UserEntity.Password, model.Password);
+        if (verifyPasswordResult == PasswordVerificationResult.Failed)
+            return false;
+
+        // finally, since the user exists and the password is correct, sign in the user
+        await _signInManager.SignInAsync(UserEntity, true);
+        return true;
+    }
+
+    public async Task LogoutAsync()
+    {
+        await _signInManager.SignOutAsync();
     }
 
     public async Task<bool> RegisterUserAsync(UserRegister model)
@@ -29,10 +60,13 @@ public class UserService : IUserService
         var passwordHasher = new PasswordHasher<UserEntity>();
         entity.Password = passwordHasher.HashPassword(entity, model.Password);
 
-        _context.Users.Add(entity);
-        int numberOfChanges = await _context.SaveChangesAsync();
+        var createResult = await _userManager.CreateAsync(entity);
+        return createResult.Succeeded; //replaces the following
 
-        return numberOfChanges == 1;
+        // _context.Users.Add(entity);
+        // int numberOfChanges = await _context.SaveChangesAsync();
+
+        // return numberOfChanges == 1;
     }
 
     public async Task<UserDetail?> GetUserByIdAsync(int userId)
